@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<MessageCollection xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:noNamespaceSchemaLocation="messagecollection.xsd">
+
+  <Plugin>
+    <ShortDescription>AWS Lambda SnapStart SpotBugs Plugin</ShortDescription>
+    <Details>TBD</Details>
+  </Plugin>
+
+  <Detector class="software.amazon.lambda.snapstart.LambdaHandlerInitedWithRandomValue">
+    <Details>
+      Original detector to detect MY_BUG bug pattern.
+    </Details>
+  </Detector>
+
+  <BugPattern type="AWS_LAMBDA_SNAP_START_BUG">
+    <ShortDescription>AWS Lambda SnapStart violation.</ShortDescription>
+    <LongDescription>
+      AWS Lambda functions that use SnapStart feature should not initialize Lambda handler class members with
+      pseudo random generators. As SnapStart functions are snapshotted once after handler class initialization
+      is done, class members with pseudo-random values won't be pseudo-random anymore.
+    </LongDescription>
+    <Details>
+<![CDATA[
+<p>Explain existing problem in code, and how developer should improve their implementation.</p>
+]]>
+    </Details>
+  </BugPattern>
+
+  <BugCode abbrev="SNAP_START">My SpotBugs BugCode</BugCode>
+</MessageCollection>
