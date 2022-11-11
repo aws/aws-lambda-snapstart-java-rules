@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<FindbugsPlugin xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:noNamespaceSchemaLocation="findbugsplugin.xsd"
+        pluginid="software.amazon.lambda.snapstart">
+
+        <Detector class="software.amazon.lambda.snapstart.LambdaHandlerInitedWithRandomValue" reports="AWS_LAMBDA_SNAP_START_BUG" />
+
+        <BugPattern abbrev="SNAP_START" type="AWS_LAMBDA_SNAP_START_BUG" category="CORRECTNESS" />
+</FindbugsPlugin>
