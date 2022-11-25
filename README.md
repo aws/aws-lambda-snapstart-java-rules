@@ -25,7 +25,7 @@ spotbugs {
 
 dependencies {
     spotbugs("com.github.spotbugs:spotbugs:4.7.1")
-    spotbugsPlugins("software.amazon.lambda.snapstart:aws-lambda-snapstart-java-rules:0.1-SNAPSHOT")
+    spotbugsPlugins("software.amazon.lambda.snapstart:aws-lambda-snapstart-java-rules:0.1")
 }
 ```
 
@@ -50,7 +50,7 @@ Example:
                     <plugin>
                         <groupId>software.amazon.lambda.snapstart</groupId>
                         <artifactId>aws-lambda-snapstart-java-rules</artifactId>
-                        <version>0.1-SNAPSHOT</version>
+                        <version>0.1</version>
                     </plugin>
                 </plugins>
             </configuration>
