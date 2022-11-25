@@ -1,3 +1,6 @@
+// Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
+// SPDX-License-Identifier: Apache-2.0
+
 package software.amazon.lambda.snapstart;
 
 import edu.umd.cs.findbugs.BugInstance;
@@ -7,11 +10,9 @@ import edu.umd.cs.findbugs.ba.XClass;
 import edu.umd.cs.findbugs.ba.XField;
 import edu.umd.cs.findbugs.ba.XMethod;
 import edu.umd.cs.findbugs.bcel.OpcodeStackDetector;
-import java.util.HashSet;
-import java.util.Set;
+import edu.umd.cs.findbugs.classfile.Global;
 import org.apache.bcel.Const;
 import org.apache.bcel.classfile.Code;
-import org.apache.bcel.classfile.Field;
 import org.apache.bcel.classfile.JavaClass;
 
 /**
@@ -21,81 +22,99 @@ public class LambdaHandlerInitedWithRandomValue extends OpcodeStackDetector {
 
     private static final String SNAP_START_BUG = "AWS_LAMBDA_SNAP_START_BUG";
 
-
     private final BugReporter bugReporter;
     private boolean isLambdaHandlerClass;
+    private boolean isCracResource;
     private boolean inInitializer;
     private boolean inStaticInitializer;
+    private boolean inCracBeforeCheckpoint;
     private ByteCodeIntrospector introspector;
-
-    /**
-     * These are static or non-static member fields of the Lambda handler class.
-     */
-    private Set<XField> memberFields;
+    private ReturnValueRandomnessPropertyDatabase database;
 
     public LambdaHandlerInitedWithRandomValue(BugReporter bugReporter) {
         this.bugReporter = bugReporter;
         this.isLambdaHandlerClass = false;
-        this.memberFields = new HashSet<>();
+        this.isCracResource = false;
         this.inInitializer = false;
         this.inStaticInitializer = false;
+        this.inCracBeforeCheckpoint = false;
         this.introspector = new ByteCodeIntrospector();
     }
 
     @Override
     public void visit(JavaClass obj) {
-        memberFields.clear();
         inInitializer = false;
         inStaticInitializer = false;
+        inCracBeforeCheckpoint = false;
         XClass xClass = getXClass();
         isLambdaHandlerClass = introspector.isLambdaHandler(xClass);
-    }
-
-    @Override
-    public void visit(Field obj) {
-        if (isLambdaHandlerClass) {
-            XField xField = getXField();
-            memberFields.add(xField);
-        }
+        isCracResource = introspector.isCracResource(xClass);
     }
 
     @Override
     public boolean shouldVisitCode(Code code) {
-        if (!isLambdaHandlerClass) {
-            return false;
+        boolean shouldVisit = false;
+        if (isLambdaHandlerClass) {
+            inStaticInitializer = getMethodName().equals(Const.STATIC_INITIALIZER_NAME);
+            inInitializer = getMethodName().equals(Const.CONSTRUCTOR_NAME);
+            database = Global.getAnalysisCache().getDatabase(ReturnValueRandomnessPropertyDatabase.class);
+            if (inInitializer || inStaticInitializer) {
+                shouldVisit = true;
+            }
+        } else {
+            inStaticInitializer = false;
+            inInitializer = false;
         }
-        inStaticInitializer = getMethodName().equals(Const.STATIC_INITIALIZER_NAME);
-        inInitializer = getMethodName().equals(Const.CONSTRUCTOR_NAME);
-        return inInitializer || inStaticInitializer;
+        if (isCracResource) {
+            inCracBeforeCheckpoint = getMethodName().equals("beforeCheckpoint");
+            if (inCracBeforeCheckpoint) {
+                shouldVisit = true;
+            }
+        } else {
+            inCracBeforeCheckpoint = false;
+        }
+        return shouldVisit;
     }
 
     @Override
     public void sawOpcode(int seen) {
-        if (!isLambdaHandlerClass) {
-            return;
-        }
-
         switch (seen) {
             case Const.PUTSTATIC:
             case Const.PUTFIELD: {
                 XField xField = getXFieldOperand();
-                if (memberFields.contains(xField)) {
-                    reportIfRandomInitialized(xField);
+                if (getXClass().getXFields().contains(xField)) {
+                    if (isOperandStackTopBadRng() || isRandomValue() || isOperandStackTopTimestamp()) {
+                        reportBug(xField);
+                    }
                 }
                 break;
             }
         }
     }
 
-    private void reportIfRandomInitialized(XField field) {
+    private boolean isOperandStackTopBadRng() {
+        return introspector.isRandomType(getStack());
+    }
+
+    private boolean isRandomValue() {
         XMethod returningMethod = getReturningMethodOrNull();
-        if (returningMethod != null && introspector.isPseudoRandomMethod(returningMethod)) {
-            BugInstance bug = new BugInstance(this, SNAP_START_BUG, HIGH_PRIORITY)
-                    .addClass(field.getClassDescriptor())
-                    .addField(field)
-                    .addSourceLine(this);
-            bugReporter.reportBug(bug);
+        if (returningMethod == null) {
+            return false;
         }
+        Boolean returnsRandom = database.getProperty(returningMethod.getMethodDescriptor());
+        return returnsRandom != null && returnsRandom;
+    }
+
+    private boolean isOperandStackTopTimestamp() {
+        return introspector.isTimestamp(getStack());
+    }
+
+    private void reportBug(XField xField) {
+        BugInstance bug = new BugInstance(this, SNAP_START_BUG, HIGH_PRIORITY)
+                .addClassAndMethod(this.getXMethod())
+                .addField(xField)
+                .addSourceLine(this);
+        bugReporter.reportBug(bug);
     }
 
     private XMethod getReturningMethodOrNull() {

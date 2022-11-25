@@ -4,28 +4,39 @@
 
   <Plugin>
     <ShortDescription>AWS Lambda SnapStart SpotBugs Plugin</ShortDescription>
-    <Details>TBD</Details>
+    <Details>This plugin contains AWS Lambda SnapStart bug detectors.</Details>
   </Plugin>
+
+  <Detector class="software.amazon.lambda.snapstart.BuildRandomReturningMethodsDatabase">
+    <Details>
+      Builds the database of methods which might recursively return a byproduct of a pseudo-random value.
+    </Details>
+  </Detector>
 
   <Detector class="software.amazon.lambda.snapstart.LambdaHandlerInitedWithRandomValue">
     <Details>
-      Original detector to detect MY_BUG bug pattern.
+      Main detector to find out SnapStart bugs in Lambda handler classes.
     </Details>
   </Detector>
 
   <BugPattern type="AWS_LAMBDA_SNAP_START_BUG">
-    <ShortDescription>AWS Lambda SnapStart violation.</ShortDescription>
-    <LongDescription>
-      AWS Lambda functions that use SnapStart feature should not initialize Lambda handler class members with
-      pseudo random generators. As SnapStart functions are snapshotted once after handler class initialization
-      is done, class members with pseudo-random values won't be pseudo-random anymore.
-    </LongDescription>
+    <ShortDescription>Detected handler state that is potentially not resilient to VM snapshot and restore operations.</ShortDescription>
+    <LongDescription>Detected handler state that is potentially not resilient to VM snapshot and restore operations in Lambda function {0}.</LongDescription>
     <Details>
-<![CDATA[
-<p>Explain existing problem in code, and how developer should improve their implementation.</p>
-]]>
+      <![CDATA[
+        <p>Our analysis shows that AWS Lambda handler class initialization creates state that might have adverse effects
+         on the output of the function when it uses SnapStart. Lambda functions that use SnapStart are
+         snapshotted at their initialized state and all execution environments created afterwards share the same initial
+         state. This means that if the Lambda function relies on state that is not resilient to snapshot and restore
+         operations, it might manifest an unexpected behavior by using SnapStart.</p>
+
+         <p>Note that there are countless ways of initializing a Lambda function handler such that it’s not compatible
+         with SnapStart. This tool helps you as much as possible but please use your own judgement to and refer
+         to <a href="https://github.com/aws/aws-lambda-snapstart-java-rules/README.md">the documentation</a> for
+         understanding how to avoid making your Lambda function SnapStart incompatible.</p>
+      ]]>
     </Details>
   </BugPattern>
 
-  <BugCode abbrev="SNAP_START">My SpotBugs BugCode</BugCode>
+  <BugCode abbrev="SNAP_START">Potential SnapStart Bug</BugCode>
 </MessageCollection>

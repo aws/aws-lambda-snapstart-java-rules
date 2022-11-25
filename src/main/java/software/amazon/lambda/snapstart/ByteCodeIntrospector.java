@@ -1,5 +1,9 @@
+// Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
+// SPDX-License-Identifier: Apache-2.0
+
 package software.amazon.lambda.snapstart;
 
+import edu.umd.cs.findbugs.OpcodeStack;
 import edu.umd.cs.findbugs.ba.XClass;
 import edu.umd.cs.findbugs.ba.XMethod;
 import edu.umd.cs.findbugs.classfile.CheckedAnalysisException;
@@ -9,8 +13,8 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Random;
 import java.util.Set;
-import java.util.UUID;
 
 public class ByteCodeIntrospector {
 
@@ -21,11 +25,14 @@ public class ByteCodeIntrospector {
         add("com.amazonaws.services.lambda.runtime.RequestStreamHandler");
     }};
 
-    private static final Map<String, Set<String>> PSEUDO_RANDOM_METHODS = new HashMap<String, Set<String>>() {{
-        put("java.lang.Math", setOf("random"));
-        put("java.util.UUID", setOf("randomUUID"));
-        put("java.util.Random", setOf("nextInt"));
-        put("java.util.Random", setOf("nextInt"));
+    private static final String CRAC_RESOURCE_INTERFACE = "org.crac.Resource";
+
+    private static final String RANDOM_SIGNATURE = "Ljava/util/Random;";
+
+    private static final String INSTANT_SIGNATURE = "Ljava/time/Instant;";
+
+    private static final Map<String, Set<String>> TIMESTAMP_METHODS = new HashMap<String, Set<String>>() {{
+        put("java.lang.System", setOf("currentTimeMillis", "nanoTime"));
     }};
 
     private static Set<String> setOf(String ... strings) {
@@ -61,29 +68,63 @@ public class ByteCodeIntrospector {
      * <a href="https://docs.aws.amazon.com/lambda/latest/dg/java-handler.html">AWS Lambda handler interfaces</a>.
      */
     boolean implementsLambdaInterface(XClass xClass) {
-        try {
-            ClassDescriptor[] interfaces = xClass.getInterfaceDescriptorList();
-            for (ClassDescriptor id : interfaces) {
-                if (id.getXClass().isInterface() && LAMBDA_HANDLER_INTERFACES.contains(id.getDottedClassName())) {
+        for (ClassDescriptor classDescriptor : xClass.getInterfaceDescriptorList()) {
+            try {
+                if (classDescriptor.getXClass().isInterface() && LAMBDA_HANDLER_INTERFACES.contains(classDescriptor.getDottedClassName())) {
                     return true;
                 }
+            } catch (CheckedAnalysisException e) {
+                // ignore
             }
-        } catch (CheckedAnalysisException e) {
-            // ignore
         }
         return false;
     }
 
     /**
-     * This can only return when the method is one of these:
-     * 1. {@link Math#random()}
-     * 2. {@link UUID#randomUUID()}
+     * This returns true only when the class directly implements the CRaC (Coordinated Restore at Checkpoint)
+     * <a href="https://javadoc.io/doc/io.github.crac/org-crac/latest/org/crac/Resource.html">Resource interface</a>.
      */
-    boolean isPseudoRandomMethod(XMethod xMethod) {
-        Set<String> classMethods = PSEUDO_RANDOM_METHODS.get(xMethod.getClassName());
-        if (classMethods != null) {
-            return classMethods.contains(xMethod.getName());
+    boolean isCracResource(XClass xClass) {
+        for (ClassDescriptor classDescriptor : xClass.getInterfaceDescriptorList()) {
+            try {
+                if (classDescriptor.getXClass().isInterface()) {
+                    if (CRAC_RESOURCE_INTERFACE.equals(classDescriptor.getDottedClassName())) {
+                        return true;
+                    }
+                }
+            } catch (CheckedAnalysisException e) {
+                // ignore
+            }
         }
         return false;
     }
+
+    /**
+     * Return true if is {@link Random} type.
+     * Otherwise, return false.
+     */
+    boolean isRandomType(OpcodeStack stack) {
+        return RANDOM_SIGNATURE.equals(stack.getStackItem(0).getSignature());
+    }
+
+    /**
+     * Return true if:
+     *  - is Instant type
+     *  - is a known method that returns a timestamp-like value, such as {@link System#currentTimeMillis()}
+     * Otherwise, return false.
+     */
+    boolean isTimestamp(OpcodeStack stack) {
+        if (INSTANT_SIGNATURE.equals(stack.getStackItem(0).getSignature())) {
+            return true;
+        }
+        XMethod xMethod = stack.getStackItem(0).getReturnValueOf();
+        if (xMethod != null) {
+            Set<String> methodNames = TIMESTAMP_METHODS.get(xMethod.getClassName());
+            if (methodNames != null) {
+                return methodNames.contains(xMethod.getName());
+            }
+        }
+        return false;
+    }
+
 }
