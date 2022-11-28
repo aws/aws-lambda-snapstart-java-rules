@@ -15,7 +15,7 @@ Example:
 
 ```kotlin
 plugins {
-    id("com.github.spotbugs") version "4.7.1"
+    id("com.github.spotbugs") version "4.7.3"
 }
 
 spotbugs {
@@ -24,10 +24,12 @@ spotbugs {
 }
 
 dependencies {
-    spotbugs("com.github.spotbugs:spotbugs:4.7.1")
+    spotbugs("com.github.spotbugs:spotbugs:4.7.3")
     spotbugsPlugins("software.amazon.lambda.snapstart:aws-lambda-snapstart-java-rules:0.1")
 }
 ```
+
+After updating the `build.gradle` file you can run `./gradlew check` to run the analysis and see the result.
 
 ### Maven Builds
 
@@ -41,7 +43,7 @@ Example:
         <plugin>
             <groupId>com.github.spotbugs</groupId>
             <artifactId>spotbugs-maven-plugin</artifactId>
-            <version>${spotbugs.version}</version>
+            <version>4.7.3.0</version>
             <configuration>
                 <effort>Max</effort>
                 <threshold>medium</threshold>
@@ -58,6 +60,8 @@ Example:
     </plugins>
 </build>
 ```
+
+After updating `pom.xml`  you can run `mvn compile && mvn spotbugs:spotbugs` to run the analysis and see results in `targets/spotbugsXml.xml` file. Also, you can run `mvn spotbugs:check` to see results on your terminal and `mvn spotbugs:gui` on SpotBug's graphical UI.
 
 ## Bug Descriptions
 

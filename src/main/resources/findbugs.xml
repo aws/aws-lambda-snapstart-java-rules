@@ -7,7 +7,7 @@
             <SplitPass>
                 <!--
                   We add this constraint to force running BuildRandomReturningMethodsDatabase in the
-                  second pass which follows the topological order in classes and
+                  second pass which follows the topological order in classes
                 -->
                 <Earlier class="edu.umd.cs.findbugs.detect.CalledMethods"/>
                 <Later class="software.amazon.lambda.snapstart.BuildRandomReturningMethodsDatabase"/>
