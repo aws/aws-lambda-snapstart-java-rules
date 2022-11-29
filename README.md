@@ -77,7 +77,9 @@ is not resilient to snapshot and restore operations, it might manifest an unexpe
 
 This tool helps provide an insight on possible cases where your code may not be fully compatible with 
 snapstart enabled. Please verify that your code maintains uniqueness with SnapStart. For best practices, follow the 
-guidelines outlined in the SnapStart [documentation](https://github.com/aws/aws-lambda-snapstart-java-rules/wiki).
+guidelines outlined in [SnapStart feature documentation](https://docs.aws.amazon.com/lambda/latest/dg/snapstart.html).
+For more information on the tool and examples of scenarios that the tool helps identify, refer to the
+[SnapStart scanner GitHub documentation](https://github.com/aws/aws-lambda-snapstart-java-rules/wiki).
 
 ## Security
 
