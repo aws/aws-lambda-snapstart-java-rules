@@ -70,16 +70,15 @@ After updating `pom.xml`  you can run `mvn compile && mvn spotbugs:spotbugs` to 
 
 ### SNAP_START: Detected handler state that is potentially not resilient to VM snapshot and restore operations. (AWS_LAMBDA_SNAP_START_BUG)
 
-Our analysis shows that AWS Lambda handler class initialization creates state that might have adverse effects
-on the output of the function when it uses SnapStart. Lambda functions that use SnapStart are
-snapshotted at their initialized state and all execution environments created afterwards share the same initial
-state. This means that if the Lambda function relies on state that is not resilient to snapshot and restore
-operations, it might manifest an unexpected behavior by using SnapStart.
+Our analysis shows that AWS Lambda handler class initialization creates state that may not remain unique for the function 
+when it uses SnapStart. Lambda functions that use SnapStart are  snapshotted at their initialized state and all execution 
+environments created afterwards share the same initial state. This means that if the Lambda function relies on state that 
+is not resilient to snapshot and restore operations, it might manifest an unexpected behavior by using SnapStart.
 
 Note that there are countless ways of initializing a Lambda function handler such that it’s not compatible
-with SnapStart. This tool helps you as much as possible but please use your own judgement to and refer
-to [the documentation](https://github.com/aws/aws-lambda-snapstart-java-rules/wiki) for
-understanding how to avoid making your Lambda function SnapStart incompatible.
+with SnapStart. This tool helps provide an insight on possible cases where your code may not be fully compatible with 
+snapstart enabled. Please verify that your code maintains uniqueness with SnapStart. For best practices, follow the 
+guidelines outlined in the SnapStart [documentation](https://github.com/aws/aws-lambda-snapstart-java-rules/wiki).
 
 ## Security
 
