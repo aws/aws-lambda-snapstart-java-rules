@@ -75,8 +75,7 @@ when it uses SnapStart. Lambda functions that use SnapStart are  snapshotted at 
 environments created afterwards share the same initial state. This means that if the Lambda function relies on state that 
 is not resilient to snapshot and restore operations, it might manifest an unexpected behavior by using SnapStart.
 
-Note that there are countless ways of initializing a Lambda function handler such that it’s not compatible
-with SnapStart. This tool helps provide an insight on possible cases where your code may not be fully compatible with 
+This tool helps provide an insight on possible cases where your code may not be fully compatible with 
 snapstart enabled. Please verify that your code maintains uniqueness with SnapStart. For best practices, follow the 
 guidelines outlined in the SnapStart [documentation](https://github.com/aws/aws-lambda-snapstart-java-rules/wiki).
 
