@@ -1,3 +1,6 @@
+// Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
+// SPDX-License-Identifier: Apache-2.0
+
 package software.amazon.lambda.snapstart.lambdaexamples;
 
 import com.amazonaws.services.lambda.runtime.Context;
@@ -7,17 +10,17 @@ import java.util.UUID;
 
 public class LambdaUsingUuid implements RequestHandler<Map<String,String>, String> {
 
-    private static final String ID1 = "a" + UUID.randomUUID(); // this is a bug
-    private static final String ID2 = UUID.randomUUID() + "a"; // this is a bug
+    private static final String ID1 = "a" + UUID.randomUUID(); // This is a bug
+    private static final String ID2 = UUID.randomUUID() + "a"; // This is a bug
     private final String id3;
-    private final String id4 = newString(); // this is a bug
+    private final String id4 = newString(); // This is a bug
     private final UUID id5;
-    private final String name = "example"; // this is NOT a bug
+    private final String name = "example"; // This is NOT a bug
 
 
     public LambdaUsingUuid() {
-        id3 = UUID.randomUUID().toString(); // this is a bug
-        id5 = UUID.randomUUID(); // this is a bug
+        id3 = UUID.randomUUID().toString(); // This is a bug
+        id5 = UUID.randomUUID(); // This is a bug
     }
 
     @Override
@@ -26,6 +29,6 @@ public class LambdaUsingUuid implements RequestHandler<Map<String,String>, Strin
     }
 
     public String newString() {
-        return UUID.randomUUID().toString() + "c";
+        return UUID.randomUUID() + "c";
     }
 }
