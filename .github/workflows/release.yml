@@ -30,7 +30,7 @@ jobs:
           gpg-private-key: ${{ secrets.GPG_SIGNING_KEY }} # Value of the GPG private key to import
           gpg-passphrase: GPG_PASSPHRASE # env variable for GPG private key passphrase
       - name: Release and publish package
-        run: mvn release:prepare release:perform -B -DreleaseVersion=${{ github.event.inputs.releaseVersion }} -DdevelopmentVersion=${{ github.event.inputs.developmentVersion }}
+        run: mvn -Prelease-sign-artifacts clean deploy
         env:
           MAVEN_USERNAME: ${{ secrets.OSSRH_JIRA_USERNAME }}
           MAVEN_PASSWORD: ${{ secrets.OSSRH_JIRA_PASSWORD }}
