@@ -7,9 +7,6 @@ their functions against potential bugs unique to AWS Lambda SnapStart environmen
 
 Following sections explain how to enable this plugin in your Gradle and Maven projects.
 
-| :exclamation:  Maven repository may not have the artifact available by the time you're reading these instructions. Until it's available, you can clone this repository to your local and run `mvn install` to install this SpotBugs plugin to your local Maven repository. After that you can continue with the setup instructions below.|
-|-----------------------------------------|
-
 ### Gradle Builds
 
 After SpotBugs is [enabled in the Gradle project](https://spotbugs.readthedocs.io/en/latest/gradle.html) declaring a dependency on SnapStart bug scanner is sufficient. 
@@ -28,7 +25,7 @@ spotbugs {
 
 dependencies {
     spotbugs("com.github.spotbugs:spotbugs:4.7.3")
-    spotbugsPlugins("software.amazon.lambda.snapstart:aws-lambda-snapstart-java-rules:0.1")
+    spotbugsPlugins("software.amazon.lambda.snapstart:aws-lambda-snapstart-java-rules:0.1.0")
 }
 ```
 
@@ -55,7 +52,7 @@ Example:
                     <plugin>
                         <groupId>software.amazon.lambda.snapstart</groupId>
                         <artifactId>aws-lambda-snapstart-java-rules</artifactId>
-                        <version>0.1</version>
+                        <version>0.1.0</version>
                     </plugin>
                 </plugins>
             </configuration>

@@ -4,7 +4,7 @@
 
   <groupId>software.amazon.lambda.snapstart</groupId>
   <artifactId>aws-lambda-snapstart-java-rules</artifactId>
-  <version>0.1</version>
+  <version>0.1.0</version>
   <name>${project.groupId}:${project.artifactId}</name>
   <description>AWS Lambda SnapStart SpotBugs Rules</description>
   <url>https://github.com/aws/aws-lambda-snapstart-java-rules</url>
@@ -41,7 +41,7 @@
     <repository>
       <id>ossrh</id>
       <name>Nexus Release Repository</name>
-      <url>https://aws.oss.sonatype.org/content/repositories/releases</url>
+      <url>https://aws.oss.sonatype.org/service/local/staging/deploy/maven2/</url>
     </repository>
   </distributionManagement>
 
@@ -164,6 +164,7 @@
           <plugin>
             <groupId>org.apache.maven.plugins</groupId>
             <artifactId>maven-javadoc-plugin</artifactId>
+            <version>3.4.1</version>
             <executions>
               <execution>
                 <id>attach-javadoc</id>
@@ -176,6 +177,7 @@
           <plugin>
             <groupId>org.apache.maven.plugins</groupId>
             <artifactId>maven-source-plugin</artifactId>
+            <version>3.2.1</version>
             <executions>
               <execution>
                 <id>attach-source</id>
