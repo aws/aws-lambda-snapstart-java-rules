@@ -146,6 +146,12 @@ public class LambdaHandlerInitedWithRandomValueTest extends AbstractSnapStartTes
         assertThat(bugCollection, containsExactly(4, snapStartBugMatcher().inClass(className).build()));
     }
 
+    @Test
+    public void testLambdaWithToString() {
+        BugCollection bugCollection = findBugsInClasses("LambdaWithToString");
+        assertThat(bugCollection, containsExactly(1, snapStartBugMatcher().inClass("LambdaWithToString").atField("random").atLine(11).build()));
+    }
+
     // TODO fix all tests using this and remove this method eventually!
     private static void toBeFixed(Executable e) {
         assertThrows(AssertionError.class, e);
