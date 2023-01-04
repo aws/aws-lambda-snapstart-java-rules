@@ -4,7 +4,7 @@
 
   <groupId>software.amazon.lambda.snapstart</groupId>
   <artifactId>aws-lambda-snapstart-java-rules</artifactId>
-  <version>0.1.0</version>
+  <version>0.1.1-SNAPSHOT</version>
   <name>${project.groupId}:${project.artifactId}</name>
   <description>AWS Lambda SnapStart SpotBugs Rules</description>
   <url>https://github.com/aws/aws-lambda-snapstart-java-rules</url>

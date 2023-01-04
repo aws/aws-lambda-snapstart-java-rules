@@ -14,6 +14,7 @@ public class ReturnValueRandomnessPropertyDatabase extends MethodPropertyDatabas
     private static final Set<MethodDescriptor> ALREADY_KNOWN_PSEUDO_RANDOM_GEN_METHODS = new HashSet<>(Arrays.asList(
             new MethodDescriptor("java/lang/Math", "random", "()D", true),
             new MethodDescriptor("java/util/UUID", "randomUUID", "()Ljava/util/UUID;", true),
+            new MethodDescriptor("java/util/UUID", "toString", "()Ljava/lang/String;"),
             new MethodDescriptor("java/util/Random", "nextInt", "()I"),
             new MethodDescriptor("java/lang/StrictMath", "random", "()D", true)
     ));
