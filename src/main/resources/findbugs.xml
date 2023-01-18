@@ -16,9 +16,15 @@
                 <Earlier class="software.amazon.lambda.snapstart.BuildRandomReturningMethodsDatabase"/>
                 <Later class="software.amazon.lambda.snapstart.LambdaHandlerInitedWithRandomValue"/>
             </SplitPass>
+            <SplitPass>
+                <Earlier class="software.amazon.lambda.snapstart.CacheLambdaHandlerFields"/>
+                <Later class="software.amazon.lambda.snapstart.LambdaHandlerInitedWithRandomValue"/>
+            </SplitPass>
         </OrderingConstraints>
 
         <Detector class="software.amazon.lambda.snapstart.BuildRandomReturningMethodsDatabase"
+                  speed="fast" reports="" disabled="false" hidden="true"/>
+        <Detector class="software.amazon.lambda.snapstart.CacheLambdaHandlerFields"
                   speed="fast" reports="" disabled="false" hidden="true"/>
         <Detector class="software.amazon.lambda.snapstart.LambdaHandlerInitedWithRandomValue"
                   reports="AWS_LAMBDA_SNAP_START_BUG" />

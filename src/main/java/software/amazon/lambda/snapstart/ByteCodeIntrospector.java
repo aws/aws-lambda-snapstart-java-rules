@@ -42,7 +42,7 @@ public class ByteCodeIntrospector {
     };
 
     boolean isLambdaHandler(XClass xClass) {
-        return implementsLambdaInterface(xClass) || hasLambdaHandlerMethod(xClass);
+        return implementsLambdaInterface(xClass) || hasLambdaHandlerMethod(xClass) || isLambdaHandlerField(xClass);
     }
 
     boolean hasLambdaHandlerMethod(XClass xClass) {
@@ -57,6 +57,15 @@ public class ByteCodeIntrospector {
             }
 
             if (method.getSignature().startsWith(LAMBDA_STREAMING_HANDLER_SIGNATURE)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    boolean isLambdaHandlerField(XClass xClass) {
+        for (String fieldType : CacheLambdaHandlerFields.fieldsToVisit) {
+            if (fieldType.contains(xClass.toString())) {
                 return true;
             }
         }
