@@ -95,6 +95,17 @@ public class ByteCodeIntrospector {
                 // ignore
             }
         }
+    }
+
+    /** 
+     * This returns true only if this class is used as a field in a Lambda handler class
+     */
+    boolean isLambdaHandlerField(XClass xClass) {
+        for (String fieldType : CacheLambdaHandlerFields.fieldsToVisit) {
+            if (fieldType.equals(xClass.toString())) {
+                return true;
+            }
+        }
         return false;
     }
 
