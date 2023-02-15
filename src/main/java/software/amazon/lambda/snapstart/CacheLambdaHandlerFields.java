@@ -4,9 +4,10 @@ import edu.umd.cs.findbugs.BugReporter;
 import edu.umd.cs.findbugs.Detector;
 import edu.umd.cs.findbugs.ba.ClassContext;
 import edu.umd.cs.findbugs.ba.XClass;
+import edu.umd.cs.findbugs.classfile.DescriptorFactory;
+import edu.umd.cs.findbugs.classfile.FieldDescriptor;
+import edu.umd.cs.findbugs.classfile.Global;
 import org.apache.bcel.classfile.Field;
-
-import java.util.HashSet;
 
 /**
  * This detector stores fields with the Lambda Handler and Crac resources to be used later
@@ -14,13 +15,16 @@ import java.util.HashSet;
  */
 public class CacheLambdaHandlerFields implements Detector {
 
-    public static HashSet<String> fieldsToVisit = new HashSet<>();
     private final ByteCodeIntrospector introspector;
     private ClassContext classContext;
     private XClass xClass;
+    private final LambdaHandlerFieldsDatabase database;
+
 
     public CacheLambdaHandlerFields(BugReporter reporter) {
         introspector = new ByteCodeIntrospector();
+        database = new LambdaHandlerFieldsDatabase();
+        Global.getAnalysisCache().eagerlyPutDatabase(LambdaHandlerFieldsDatabase.class, database);
     }
 
     @Override
@@ -30,7 +34,8 @@ public class CacheLambdaHandlerFields implements Detector {
         if (introspector.isLambdaHandler(xClass)) {
             Field[] fields = classContext.getJavaClass().getFields();
             for (Field field : fields) {
-                fieldsToVisit.add(field.getType().toString().replace(".", "/"));
+                FieldDescriptor fieldDescriptor = DescriptorFactory.instance().getFieldDescriptor(xClass.toString().replace(".", "/"), field);
+                database.setProperty(fieldDescriptor, true);
             }
         }
     }

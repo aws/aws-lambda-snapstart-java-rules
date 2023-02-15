@@ -8,6 +8,10 @@ import edu.umd.cs.findbugs.ba.XClass;
 import edu.umd.cs.findbugs.ba.XMethod;
 import edu.umd.cs.findbugs.classfile.CheckedAnalysisException;
 import edu.umd.cs.findbugs.classfile.ClassDescriptor;
+import edu.umd.cs.findbugs.classfile.FieldDescriptor;
+import edu.umd.cs.findbugs.classfile.Global;
+import org.apache.bcel.generic.Type;
+
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -35,6 +39,8 @@ public class ByteCodeIntrospector {
     private static final Map<String, Set<String>> TIMESTAMP_METHODS = new HashMap<String, Set<String>>() {{
         put("java.lang.System", setOf("currentTimeMillis", "nanoTime"));
     }};
+
+    private LambdaHandlerFieldsDatabase database;
 
     private static Set<String> setOf(String ... strings) {
         Set<String> set = new HashSet<>();
@@ -95,13 +101,19 @@ public class ByteCodeIntrospector {
                 // ignore
             }
         }
+
+        return false;
     }
 
     /** 
      * This returns true only if this class is used as a field in a Lambda handler class
      */
     boolean isLambdaHandlerField(XClass xClass) {
-        for (String fieldType : CacheLambdaHandlerFields.fieldsToVisit) {
+        database = Global.getAnalysisCache().getDatabase(LambdaHandlerFieldsDatabase.class);
+        for (FieldDescriptor fieldDescriptor : database.getKeys()) {
+            
+
+            String fieldType = Type.getReturnType(fieldDescriptor.getSignature()).toString().replace(".", "/");
             if (fieldType.equals(xClass.toString())) {
                 return true;
             }
