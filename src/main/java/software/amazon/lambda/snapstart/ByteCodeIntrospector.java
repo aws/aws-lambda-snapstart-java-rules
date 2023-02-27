@@ -26,6 +26,7 @@ public class ByteCodeIntrospector {
         add("com.amazonaws.services.lambda.runtime.RequestStreamHandler");
     }};
 
+    private static final String FUNCTIONAL_INTERFACE = "java.util.function.Function";
     private static final String CRAC_RESOURCE_INTERFACE = "org.crac.Resource";
 
     private static final String RANDOM_SIGNATURE = "Ljava/util/Random;";
@@ -86,6 +87,23 @@ public class ByteCodeIntrospector {
     boolean isLambdaHandlerParentClass(XClass xClass) {
         lambdaHandlerParentsDatabase = Global.getAnalysisCache().getDatabase(LambdaHandlerParentsDatabase.class);
         return lambdaHandlerParentsDatabase.getParentClasses().contains(xClass.toString());
+    }
+
+    /**
+     * This returns true only when the class directly implements
+     * <a href="https://docs.oracle.com/javase/8/docs/api/java/util/function/Function.html">Java Functional Interface</a>.
+     */
+    boolean implementsFunctionalInterface(XClass xClass) {
+        for (ClassDescriptor classDescriptor : xClass.getInterfaceDescriptorList()) {
+            try {
+                if (classDescriptor.getXClass().isInterface() && FUNCTIONAL_INTERFACE.equals(classDescriptor.getDottedClassName())) {
+                    return true;
+                }
+            } catch (CheckedAnalysisException e) {
+                // ignore
+            }
+        }
+        return false;
     }
 
     /**

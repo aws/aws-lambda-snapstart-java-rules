@@ -158,6 +158,12 @@ public class LambdaHandlerInitedWithRandomValueTest extends AbstractSnapStartTes
         assertThat(bugCollection, containsExactly(1, snapStartBugMatcher().inClass("ParentHandler").atField("parentId").atLine(6).build()));
         assertThat(bugCollection, containsExactly(1, snapStartBugMatcher().inClass("SuperParentHandler").atField("superParentId").atLine(6).build()));
     }
+  
+    @Test
+    public void testClassImplementingFunctionalInterface() {
+        BugCollection bugCollection = findBugsInClasses("ImplementsFunctionalInterface");
+        assertThat(bugCollection, containsExactly(1, snapStartBugMatcher().inClass("ImplementsFunctionalInterface").atField("random").atLine(8).build()));
+    }
 
     // TODO fix all tests using this and remove this method eventually!
     private static void toBeFixed(Executable e) {
