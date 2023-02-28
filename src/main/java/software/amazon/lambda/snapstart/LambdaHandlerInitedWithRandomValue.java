@@ -25,6 +25,7 @@ public class LambdaHandlerInitedWithRandomValue extends OpcodeStackDetector {
     private final BugReporter bugReporter;
     private boolean isLambdaHandlerClass;
     private boolean implementsFunctionalInterface;
+    private boolean isLambdaHandlerField;
     private boolean isCracResource;
     private boolean inInitializer;
     private boolean inStaticInitializer;
@@ -36,6 +37,7 @@ public class LambdaHandlerInitedWithRandomValue extends OpcodeStackDetector {
         this.bugReporter = bugReporter;
         this.isLambdaHandlerClass = false;
         this.implementsFunctionalInterface = false;
+        this.isLambdaHandlerField = false;
         this.isCracResource = false;
         this.inInitializer = false;
         this.inStaticInitializer = false;
@@ -51,13 +53,14 @@ public class LambdaHandlerInitedWithRandomValue extends OpcodeStackDetector {
         XClass xClass = getXClass();
         isLambdaHandlerClass = introspector.isLambdaHandler(xClass);
         implementsFunctionalInterface = introspector.implementsFunctionalInterface(xClass);
+        isLambdaHandlerField = introspector.isLambdaHandlerField(xClass);
         isCracResource = introspector.isCracResource(xClass);
     }
 
     @Override
     public boolean shouldVisitCode(Code code) {
         boolean shouldVisit = false;
-        if (isLambdaHandlerClass || implementsFunctionalInterface) {
+        if (isLambdaHandlerClass || implementsFunctionalInterface || isLambdaHandlerField) {
             inStaticInitializer = getMethodName().equals(Const.STATIC_INITIALIZER_NAME);
             inInitializer = getMethodName().equals(Const.CONSTRUCTOR_NAME);
             database = Global.getAnalysisCache().getDatabase(ReturnValueRandomnessPropertyDatabase.class);
