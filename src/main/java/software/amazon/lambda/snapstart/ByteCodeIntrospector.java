@@ -49,7 +49,29 @@ public class ByteCodeIntrospector {
     };
 
     boolean isLambdaHandler(XClass xClass) {
-        return implementsLambdaInterface(xClass) || hasLambdaHandlerMethod(xClass);
+        return implementsLambdaInterface(xClass) || 
+               hasLambdaHandlerMethod(xClass) || 
+               (hasHandlerInClassName(xClass) && hasHandleRequestMethod(xClass));
+    }
+
+    /**
+     * Returns true if the class has the word "Handler" in the name.
+     */
+    private boolean hasHandlerInClassName(XClass xClass) {
+        return xClass.toString().contains("Handler");
+    }
+
+    /**
+     * Returns true if the class has a method called "handleRequest"
+     */
+    private boolean hasHandleRequestMethod(XClass xClass) {
+        List<? extends XMethod> methods = xClass.getXMethods();
+        for (XMethod method : methods) {
+            if (method.getName().equals("handleRequest")) {
+                return true;
+            }
+        }
+        return false;
     }
 
     boolean hasLambdaHandlerMethod(XClass xClass) {
