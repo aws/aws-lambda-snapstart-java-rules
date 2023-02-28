@@ -163,6 +163,12 @@ public class LambdaHandlerInitedWithRandomValueTest extends AbstractSnapStartTes
         BugCollection bugCollection = findBugsInClasses("LambdaHandlerWithNoInterface");
         assertThat(bugCollection, containsExactly(1, snapStartBugMatcher().inClass("LambdaHandlerWithNoInterface").atField("random").atLine(7).build()));
     }
+  
+    @Test
+    public void testLambdaWithDependencyInjection() {
+        BugCollection bugCollection = findBugsInClasses("DependencyInjection", "MyDependency");
+        assertThat(bugCollection, containsExactly(1, snapStartBugMatcher().inClass("MyDependency").atField("random").atLine(6).build()));
+    }
 
     // TODO fix all tests using this and remove this method eventually!
     private static void toBeFixed(Executable e) {
