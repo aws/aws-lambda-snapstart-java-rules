@@ -9,6 +9,10 @@ import edu.umd.cs.findbugs.ba.XMethod;
 import edu.umd.cs.findbugs.classfile.CheckedAnalysisException;
 import edu.umd.cs.findbugs.classfile.ClassDescriptor;
 import edu.umd.cs.findbugs.classfile.Global;
+import edu.umd.cs.findbugs.classfile.FieldDescriptor;
+import edu.umd.cs.findbugs.classfile.Global;
+import org.apache.bcel.generic.Type;
+
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -38,6 +42,7 @@ public class ByteCodeIntrospector {
     }};
 
     private LambdaHandlerParentsDatabase lambdaHandlerParentsDatabase;
+    private LambdaHandlerFieldsDatabase database;
 
     private static Set<String> setOf(String ... strings) {
         Set<String> set = new HashSet<>();
@@ -46,7 +51,29 @@ public class ByteCodeIntrospector {
     };
 
     boolean isLambdaHandler(XClass xClass) {
-        return implementsLambdaInterface(xClass) || hasLambdaHandlerMethod(xClass);
+        return implementsLambdaInterface(xClass) || 
+               hasLambdaHandlerMethod(xClass) || 
+               (hasHandlerInClassName(xClass) && hasHandleRequestMethod(xClass));
+    }
+
+    /**
+     * Returns true if the class has the word "Handler" in the name.
+     */
+    private boolean hasHandlerInClassName(XClass xClass) {
+        return xClass.toString().contains("Handler");
+    }
+
+    /**
+     * Returns true if the class has a method called "handleRequest"
+     */
+    private boolean hasHandleRequestMethod(XClass xClass) {
+        List<? extends XMethod> methods = xClass.getXMethods();
+        for (XMethod method : methods) {
+            if (method.getName().equals("handleRequest")) {
+                return true;
+            }
+        }
+        return false;
     }
 
     boolean hasLambdaHandlerMethod(XClass xClass) {
@@ -101,6 +128,23 @@ public class ByteCodeIntrospector {
                 }
             } catch (CheckedAnalysisException e) {
                 // ignore
+            }
+        }
+
+        return false;
+    }
+
+    /** 
+     * This returns true only if this class is used as a field in a Lambda handler class
+     */
+    boolean isLambdaHandlerField(XClass xClass) {
+        database = Global.getAnalysisCache().getDatabase(LambdaHandlerFieldsDatabase.class);
+        for (FieldDescriptor fieldDescriptor : database.getKeys()) {
+            
+
+            String fieldType = Type.getReturnType(fieldDescriptor.getSignature()).toString().replace(".", "/");
+            if (fieldType.equals(xClass.toString())) {
+                return true;
             }
         }
         return false;
