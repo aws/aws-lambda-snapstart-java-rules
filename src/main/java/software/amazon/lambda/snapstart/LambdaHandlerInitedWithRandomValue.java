@@ -24,6 +24,7 @@ public class LambdaHandlerInitedWithRandomValue extends OpcodeStackDetector {
 
     private final BugReporter bugReporter;
     private boolean isLambdaHandlerClass;
+    private boolean isLambdaHandlerParentClass;
     private boolean implementsFunctionalInterface;
     private boolean isLambdaHandlerField;
     private boolean isCracResource;
@@ -36,6 +37,7 @@ public class LambdaHandlerInitedWithRandomValue extends OpcodeStackDetector {
     public LambdaHandlerInitedWithRandomValue(BugReporter bugReporter) {
         this.bugReporter = bugReporter;
         this.isLambdaHandlerClass = false;
+        this.isLambdaHandlerParentClass = false;
         this.implementsFunctionalInterface = false;
         this.isLambdaHandlerField = false;
         this.isCracResource = false;
@@ -52,6 +54,7 @@ public class LambdaHandlerInitedWithRandomValue extends OpcodeStackDetector {
         inCracBeforeCheckpoint = false;
         XClass xClass = getXClass();
         isLambdaHandlerClass = introspector.isLambdaHandler(xClass);
+        isLambdaHandlerParentClass = introspector.isLambdaHandlerParentClass(xClass);
         implementsFunctionalInterface = introspector.implementsFunctionalInterface(xClass);
         isLambdaHandlerField = introspector.isLambdaHandlerField(xClass);
         isCracResource = introspector.isCracResource(xClass);
@@ -60,7 +63,7 @@ public class LambdaHandlerInitedWithRandomValue extends OpcodeStackDetector {
     @Override
     public boolean shouldVisitCode(Code code) {
         boolean shouldVisit = false;
-        if (isLambdaHandlerClass || implementsFunctionalInterface || isLambdaHandlerField) {
+        if (isLambdaHandlerClass || implementsFunctionalInterface || isLambdaHandlerField || isLambdaHandlerParentClass) {
             inStaticInitializer = getMethodName().equals(Const.STATIC_INITIALIZER_NAME);
             inInitializer = getMethodName().equals(Const.CONSTRUCTOR_NAME);
             database = Global.getAnalysisCache().getDatabase(ReturnValueRandomnessPropertyDatabase.class);

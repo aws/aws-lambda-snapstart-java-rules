@@ -8,6 +8,7 @@ import edu.umd.cs.findbugs.ba.XClass;
 import edu.umd.cs.findbugs.ba.XMethod;
 import edu.umd.cs.findbugs.classfile.CheckedAnalysisException;
 import edu.umd.cs.findbugs.classfile.ClassDescriptor;
+import edu.umd.cs.findbugs.classfile.Global;
 import edu.umd.cs.findbugs.classfile.FieldDescriptor;
 import edu.umd.cs.findbugs.classfile.Global;
 import org.apache.bcel.generic.Type;
@@ -40,6 +41,7 @@ public class ByteCodeIntrospector {
         put("java.lang.System", setOf("currentTimeMillis", "nanoTime"));
     }};
 
+    private LambdaHandlerParentsDatabase lambdaHandlerParentsDatabase;
     private LambdaHandlerFieldsDatabase database;
 
     private static Set<String> setOf(String ... strings) {
@@ -107,6 +109,11 @@ public class ByteCodeIntrospector {
             }
         }
         return false;
+    }
+
+    boolean isLambdaHandlerParentClass(XClass xClass) {
+        lambdaHandlerParentsDatabase = Global.getAnalysisCache().getDatabase(LambdaHandlerParentsDatabase.class);
+        return lambdaHandlerParentsDatabase.getParentClasses().contains(xClass.toString());
     }
 
     /**

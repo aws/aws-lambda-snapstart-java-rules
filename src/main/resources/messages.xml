@@ -18,6 +18,12 @@
       Detector that stores all the fields of the Lambda Handler class to be visited later.
     </Details>
   </Detector>
+  
+  <Detector class="software.amazon.lambda.snapstart.CacheLambdaHandlerParentClasses">
+    <Details>
+      Detector that stores parent classes of Lambda Handler classes to be visited later.
+    </Details>
+  </Detector>
 
   <Detector class="software.amazon.lambda.snapstart.LambdaHandlerInitedWithRandomValue">
     <Details>
