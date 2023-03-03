@@ -51,7 +51,8 @@ public class ByteCodeIntrospector {
     };
 
     boolean isLambdaHandler(XClass xClass) {
-        return implementsLambdaInterface(xClass) || 
+        return implementsLambdaInterface(xClass) ||
+               implementsFunctionalInterface(xClass) ||
                hasLambdaHandlerMethod(xClass) || 
                (hasHandlerInClassName(xClass) && hasHandleRequestMethod(xClass));
     }

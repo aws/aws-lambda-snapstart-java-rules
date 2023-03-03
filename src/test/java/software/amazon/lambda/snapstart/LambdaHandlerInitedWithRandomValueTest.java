@@ -177,6 +177,13 @@ public class LambdaHandlerInitedWithRandomValueTest extends AbstractSnapStartTes
         assertThat(bugCollection, containsExactly(1, snapStartBugMatcher().inClass("MyDependency").atField("random").atLine(6).build()));
     }
 
+    // Test a Lambda function using Dependency Injection while implementing a Functional Interface
+    @Test
+    public void testLambdaWithDependencyInjectionAndFunctionalInterface() {
+        BugCollection bugCollection = findBugsInClasses("DependencyInjectionFunctionalInterface", "MyDependency");
+        assertThat(bugCollection, containsExactly(1, snapStartBugMatcher().inClass("MyDependency").atField("random").atLine(6).build()));
+    }
+
     // TODO fix all tests using this and remove this method eventually!
     private static void toBeFixed(Executable e) {
         assertThrows(AssertionError.class, e);
