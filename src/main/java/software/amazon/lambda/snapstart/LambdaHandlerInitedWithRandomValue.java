@@ -63,7 +63,7 @@ public class LambdaHandlerInitedWithRandomValue extends OpcodeStackDetector {
     @Override
     public boolean shouldVisitCode(Code code) {
         boolean shouldVisit = false;
-        if (isLambdaHandlerClass || implementsFunctionalInterface || isLambdaHandlerField || isLambdaHandlerParentClass) {
+        if (isLambdaHandlerClass || isLambdaHandlerField || isLambdaHandlerParentClass) {
             inStaticInitializer = getMethodName().equals(Const.STATIC_INITIALIZER_NAME);
             inInitializer = getMethodName().equals(Const.CONSTRUCTOR_NAME);
             database = Global.getAnalysisCache().getDatabase(ReturnValueRandomnessPropertyDatabase.class);
