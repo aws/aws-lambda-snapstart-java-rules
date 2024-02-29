@@ -25,7 +25,7 @@ spotbugs {
 
 dependencies {
     spotbugs("com.github.spotbugs:spotbugs:4.7.3")
-    spotbugsPlugins("software.amazon.lambda.snapstart:aws-lambda-snapstart-java-rules:0.2.1")
+    spotbugsPlugins("software.amazon.lambda.snapstart:aws-lambda-snapstart-java-rules:0.2.0")
 }
 ```
 
