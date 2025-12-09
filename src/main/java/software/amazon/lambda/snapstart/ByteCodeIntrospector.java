@@ -37,6 +37,14 @@ public class ByteCodeIntrospector {
 
     private static final String INSTANT_SIGNATURE = "Ljava/time/Instant;";
 
+    private static final String LOCAL_DATE_TIME_SIGNATURE = "Ljava/time/LocalDateTime;";
+
+    private static final String LOCAL_DATE_SIGNATURE = "Ljava/time/LocalDate;";
+
+    private static final String LOCAL_TIME_SIGNATURE = "Ljava/time/LocalTime;";
+
+    private static final String ZONED_DATE_TIME_SIGNATURE = "Ljava/time/ZonedDateTime;";
+
     private static final Map<String, Set<String>> TIMESTAMP_METHODS = new HashMap<String, Set<String>>() {{
         put("java.lang.System", setOf("currentTimeMillis", "nanoTime"));
     }};
@@ -186,6 +194,18 @@ public class ByteCodeIntrospector {
      */
     boolean isTimestamp(OpcodeStack stack) {
         if (INSTANT_SIGNATURE.equals(stack.getStackItem(0).getSignature())) {
+            return true;
+        }
+        if (LOCAL_DATE_TIME_SIGNATURE.equals(stack.getStackItem(0).getSignature())) {
+            return true;
+        }
+        if (LOCAL_DATE_SIGNATURE.equals(stack.getStackItem(0).getSignature())) {
+            return true;
+        }
+        if (LOCAL_TIME_SIGNATURE.equals(stack.getStackItem(0).getSignature())) {
+            return true;
+        }
+        if (ZONED_DATE_TIME_SIGNATURE.equals(stack.getStackItem(0).getSignature())) {
             return true;
         }
         XMethod xMethod = stack.getStackItem(0).getReturnValueOf();

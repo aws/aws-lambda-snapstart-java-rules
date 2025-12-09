@@ -9,6 +9,10 @@ import com.amazonaws.services.lambda.runtime.Context;
 import com.amazonaws.services.lambda.runtime.RequestHandler;
 import java.time.Clock;
 import java.time.Instant;
+import java.time.LocalDateTime;
+import java.time.LocalDate;
+import java.time.LocalTime;
+import java.time.ZonedDateTime;
 import java.util.Map;
 
 public class LambdaUsingTs implements RequestHandler<Map<String,String>, String> {
@@ -19,12 +23,21 @@ public class LambdaUsingTs implements RequestHandler<Map<String,String>, String>
     private long tsFromSystemTimeNano;
     private Instant tsFromInstantNow;
     private Instant tsFromClock;
+    private LocalDateTime tsFromLocalDateTimeNow;
+    private LocalDate tsFromLocalDateNow;
+    private LocalTime tsFromLocalTimeNow;
+    private ZonedDateTime tsFromZonedDateTimeNow;
 
     public LambdaUsingTs(Clock clock) {
         tsFromSystemTimeMillis = System.currentTimeMillis(); // This is a bug
         tsFromSystemTimeNano = System.nanoTime(); // This is a bug
         tsFromInstantNow = Instant.now(); // This is a bug
         tsFromClock = clock.instant(); // This is a bug
+        tsFromLocalDateTimeNow = LocalDateTime.now(); // This is a bug
+        tsFromLocalDateNow = LocalDate.now(); // This is a bug
+        tsFromLocalTimeNow = LocalTime.now(); // This is a bug
+        tsFromZonedDateTimeNow = ZonedDateTime.now(); // This is a bug
+
 
         logName = getLogName(); // This is a bug
     }
@@ -40,6 +53,10 @@ public class LambdaUsingTs implements RequestHandler<Map<String,String>, String>
         out.println(tsFromSystemTimeNano);
         out.println(tsFromInstantNow);
         out.println(tsFromClock);
+        out.println(tsFromLocalDateTimeNow);
+        out.println(tsFromLocalDateNow);
+        out.println(tsFromLocalTimeNow);
+        out.println(tsFromZonedDateTimeNow);
         return "200";
     }
 }

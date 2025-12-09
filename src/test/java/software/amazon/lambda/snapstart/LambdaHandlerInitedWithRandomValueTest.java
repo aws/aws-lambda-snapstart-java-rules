@@ -113,13 +113,17 @@ public class LambdaHandlerInitedWithRandomValueTest extends AbstractSnapStartTes
         BugCollection bugCollection = findBugsInClasses("LambdaUsingTs");
         BugInstanceMatcherBuilder bugMatcherBuilder = snapStartBugMatcher().inClass("LambdaUsingTs");
 
-        assertThat(bugCollection, containsExactly(1, bugMatcherBuilder.atField("tsFromSystemTimeMillis").atLine(24).build()));
-        assertThat(bugCollection, containsExactly(1, bugMatcherBuilder.atField("tsFromSystemTimeNano").atLine(25).build()));
-        assertThat(bugCollection, containsExactly(1, bugMatcherBuilder.atField("tsFromInstantNow").atLine(26).build()));
-        assertThat(bugCollection, containsExactly(1, bugMatcherBuilder.atField("tsFromClock").atLine(27).build()));
+        assertThat(bugCollection, containsExactly(1, bugMatcherBuilder.atField("tsFromSystemTimeMillis").atLine(32).build()));
+        assertThat(bugCollection, containsExactly(1, bugMatcherBuilder.atField("tsFromSystemTimeNano").atLine(33).build()));
+        assertThat(bugCollection, containsExactly(1, bugMatcherBuilder.atField("tsFromInstantNow").atLine(34).build()));
+        assertThat(bugCollection, containsExactly(1, bugMatcherBuilder.atField("tsFromClock").atLine(35).build()));
+        assertThat(bugCollection, containsExactly(1, bugMatcherBuilder.atField("tsFromLocalDateTimeNow").atLine(36).build()));
+        assertThat(bugCollection, containsExactly(1, bugMatcherBuilder.atField("tsFromLocalDateNow").atLine(37).build()));
+        assertThat(bugCollection, containsExactly(1, bugMatcherBuilder.atField("tsFromLocalTimeNow").atLine(38).build()));
+        assertThat(bugCollection, containsExactly(1, bugMatcherBuilder.atField("tsFromZonedDateTimeNow").atLine(39).build()));
         toBeFixed(() -> assertThat(bugCollection, containsExactly(1, bugMatcherBuilder.atField("logName").atLine(29).build())));
-        assertThat(bugCollection, containsExactly(4, snapStartBugMatcher().build()));
-        toBeFixed(() -> assertThat(bugCollection, containsExactly(5, snapStartBugMatcher().build())));
+        assertThat(bugCollection, containsExactly(8, snapStartBugMatcher().build()));
+        toBeFixed(() -> assertThat(bugCollection, containsExactly(9, snapStartBugMatcher().build())));
     }
 
     @Test
